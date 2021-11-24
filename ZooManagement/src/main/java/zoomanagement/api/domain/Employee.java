@@ -1,4 +1,4 @@
-package zoomanagement.api.domain.model;
+package zoomanagement.api.domain;
 
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;

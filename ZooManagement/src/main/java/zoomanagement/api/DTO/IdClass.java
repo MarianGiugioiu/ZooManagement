@@ -1,4 +1,4 @@
-package zoomanagement.api.domain.DTO;
+package zoomanagement.api.DTO;
 
 import lombok.Data;
 

@@ -3,8 +3,8 @@ package zoomanagement.api.serializer;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import zoomanagement.api.domain.DTO.IdClass;
-import zoomanagement.api.domain.model.Animal;
+import zoomanagement.api.DTO.IdClass;
+import zoomanagement.api.domain.Animal;
 
 import java.io.IOException;
 import java.util.ArrayList;

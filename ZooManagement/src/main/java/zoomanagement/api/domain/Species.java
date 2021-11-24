@@ -1,20 +1,17 @@
-package zoomanagement.api.domain.model;
+package zoomanagement.api.domain;
 
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "diet")
-public class Diet {
+@Table(name = "species")
+public class Species {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -30,9 +27,11 @@ public class Diet {
     @Type(type="uuid-char")
     private UUID id;
 
-    private String recommendations;
+    private String name;
 
-    private String schedule;
+    @Column(name = "natural_habitat")
+    private String naturalHabitat;
 
-    private String preferences;
+    @Column(name = "general_description")
+    private String generalDescription;
 }

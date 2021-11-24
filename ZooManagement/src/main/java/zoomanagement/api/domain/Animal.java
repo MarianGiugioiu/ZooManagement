@@ -1,19 +1,25 @@
-package zoomanagement.api.domain.model;
+package zoomanagement.api.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import zoomanagement.api.serializer.AnimalListSerializer;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.UUID;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "animal")
 public class Animal {
     @Id
@@ -31,10 +37,8 @@ public class Animal {
     @Type(type="uuid-char")
     private UUID id;
 
+    @NotBlank(message = "Name is mandatory")
     private String name;
-
-    @ManyToOne
-    private Species species;
 
     private String age;
 
@@ -43,6 +47,9 @@ public class Animal {
     private String status;
 
     private String peculiarities;
+
+    @ManyToOne
+    private Species species;
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval=true)
     private Diet diet;
@@ -55,12 +62,14 @@ public class Animal {
             joinColumns={@JoinColumn(name="child_id")},
             inverseJoinColumns={@JoinColumn(name="parent_id")})
     @JsonSerialize(using = AnimalListSerializer.class)
-    private List<Animal> parents = new ArrayList<>();
+    private List<Animal> parents;
 
     @ManyToMany()
     @JoinTable(name="parents",
             joinColumns={@JoinColumn(name="parent_id")},
             inverseJoinColumns={@JoinColumn(name="child_id")})
     @JsonSerialize(using = AnimalListSerializer.class)
-    private List<Animal> children = new ArrayList<>();
+    private List<Animal> children;
+
+
 }
