@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import zoomanagement.api.DTO.DaySchedule;
 
 import javax.persistence.*;
 import java.util.List;

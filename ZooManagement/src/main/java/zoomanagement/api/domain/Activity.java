@@ -1,15 +1,18 @@
 package zoomanagement.api.domain;
 
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Data
+@Builder
 @Entity
 @Table(name = "activity")
 public class Activity {
@@ -30,7 +33,9 @@ public class Activity {
 
     private String name;
 
-    private String schedule;
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
 
     private String action;
 

@@ -3,26 +3,21 @@ package zoomanagement.api.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import zoomanagement.api.DTO.PenDTO;
 import zoomanagement.api.domain.Pen;
+import zoomanagement.api.exception.PenAlreadyUsedException;
 import zoomanagement.api.exception.ResourceNotFoundException;
 import zoomanagement.api.service.PenService;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pens")
 public class PenController {
     private final PenService penService;
-
-
 
     @GetMapping(value = {"", "/"})
     public ResponseEntity<List<Pen>> getAllPens () {
@@ -55,5 +50,23 @@ public class PenController {
     public ResponseEntity<HttpStatus> deletePen(@PathVariable("id") UUID id) throws ResourceNotFoundException {
         penService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/food/{food}")
+    public ResponseEntity<Set<Pen>> getAllPensWithAnimalsEating (@PathVariable("food") String food) {
+        Set<Pen> pens = penService.getAllPensWithAnimalsEating(food);
+        return new ResponseEntity<>(pens, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/change")
+    public ResponseEntity<HttpStatus> changePen(@RequestParam String previousPen, @RequestParam String newPen) throws ResourceNotFoundException, PenAlreadyUsedException {
+        penService.changePen(previousPen, newPen);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "map")
+    public ResponseEntity<List<PenDTO>> getMap () {
+        List<PenDTO> pens = penService.getMap();
+        return new ResponseEntity<>(pens, HttpStatus.OK);
     }
 }

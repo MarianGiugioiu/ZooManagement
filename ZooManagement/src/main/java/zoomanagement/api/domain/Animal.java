@@ -70,6 +70,4 @@ public class Animal {
             inverseJoinColumns={@JoinColumn(name="child_id")})
     @JsonSerialize(using = AnimalListSerializer.class)
     private List<Animal> children;
-
-
 }
