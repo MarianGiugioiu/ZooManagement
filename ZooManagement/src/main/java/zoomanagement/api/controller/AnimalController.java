@@ -25,41 +25,6 @@ import java.util.UUID;
 public class AnimalController {
     private final AnimalService animalService;
 
-
-
-    @GetMapping(value = {"", "/"})
-    public ResponseEntity<List<Animal>> getAllAnimals () {
-        List<Animal> animals = animalService.getAll();
-        return new ResponseEntity<>(animals, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Animal> getAnimalById(@PathVariable("id") UUID id) throws ResourceNotFoundException {
-        Animal animal;
-            animal = animalService.getOneById(id);
-        return new ResponseEntity<>(animal, HttpStatus.OK);
-    }
-
-    @PostMapping(value = {"", "/"})
-    public ResponseEntity<Animal> addAnimal (@Valid @RequestBody Animal animal) {
-        Animal savedAnimal;
-        savedAnimal = animalService.add(animal);
-        return new ResponseEntity<>(savedAnimal, HttpStatus.CREATED);
-    }
-
-    @PatchMapping(value = "/{id}")
-    public ResponseEntity<Animal> updateAnimal(@PathVariable( "id" ) UUID id, @Valid @RequestBody Animal animal ) throws ResourceNotFoundException {
-        Animal updatedAnimal;
-            updatedAnimal = animalService.update(id, animal);
-        return new ResponseEntity<>(updatedAnimal, HttpStatus.OK);
-    }
-
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<HttpStatus> deleteAnimal(@PathVariable("id") UUID id) throws ResourceNotFoundException {
-            animalService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @GetMapping(value = "/genealogical_tree")
     public ResponseEntity<Animal> getAnimalFromGenealogicalTree(@Valid @RequestBody GenealogicalTree genealogicalTree) throws AnimalMissingInGenealogicalTreeException, ResourceNotFoundException {
         return new ResponseEntity<>(animalService.getAnimalFromGenealogicalTree(genealogicalTree), HttpStatus.OK);

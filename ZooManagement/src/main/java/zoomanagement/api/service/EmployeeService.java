@@ -18,59 +18,10 @@ import java.util.UUID;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class EmployeeService implements ServiceInterface<Employee>{
+public class EmployeeService{
     private final EmployeeRepository employeeRepository;
     private final SpeciesRepository speciesRepository;
     private final Utils utils;
-
-    @Override
-    public List<Employee> getAll() {
-        log.info("Fetching all employees...");
-        return employeeRepository.findAll();
-    }
-
-    @Override
-    public Employee getOneById(UUID id) throws ResourceNotFoundException {
-        log.info("Fetching employee with id {}...", id);
-        return employeeRepository.findById(id).orElseThrow(
-                () -> {
-                    log.error("Employee not found.");
-                    return new ResourceNotFoundException("Method getOneById: Employee not found.");
-                }
-        );
-    }
-
-    @Override
-    public Employee add(Employee entry){
-        log.info("Adding employee {}...", entry.getName());
-
-        return employeeRepository.save(entry);
-    }
-
-    @Override
-    public Employee update(UUID id, Employee entry) throws ResourceNotFoundException{
-        if(employeeRepository.findById(id).isPresent()) {
-            log.info("Updating employee with id {}...", id);
-            entry.setId(id);
-            return employeeRepository.save(entry);
-        }
-        else {
-            log.error("Employee not found in the database.");
-            throw new ResourceNotFoundException("Method update: Employee not found.");
-        }
-    }
-
-    @Override
-    public void delete(UUID id) throws ResourceNotFoundException {
-        if(employeeRepository.findById(id).isPresent()) {
-            log.info("Deleting employee with id {}...", id);
-            employeeRepository.deleteById(id);
-        }
-        else {
-            log.error("Employee not found in the database.");
-            throw new ResourceNotFoundException("Method delete: Employee not found.");
-        }
-    }
 
     public List<Employee> getAllEmployeesWithSpecialization(String speciesName, LocalDateTime startTime, LocalDateTime endTime) throws ResourceNotFoundException {
         Species species = speciesRepository.findByName(speciesName).orElseThrow(
