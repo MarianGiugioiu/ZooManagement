@@ -52,25 +52,42 @@ public class Animal {
     @ManyToOne
     private Species species;
 
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval=true)
+    @OneToOne(cascade = CascadeType.MERGE, orphanRemoval=true)
     @JsonSerialize(using = DietSerializer.class)
     private Diet diet;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonSerialize(using = PenSerializer.class)
     private Pen pen;
 
-    @ManyToMany()
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name="parents",
             joinColumns={@JoinColumn(name="child_id")},
             inverseJoinColumns={@JoinColumn(name="parent_id")})
     @JsonSerialize(using = AnimalListSerializer.class)
     private List<Animal> parents;
 
-    @ManyToMany()
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name="parents",
             joinColumns={@JoinColumn(name="parent_id")},
             inverseJoinColumns={@JoinColumn(name="child_id")})
     @JsonSerialize(using = AnimalListSerializer.class)
     private List<Animal> children;
+
+    @Override
+    public String toString() {
+        return "Animal{" +
+                "id=" + id +
+                "\n name='" + name + '\'' +
+                "\n age='" + age + '\'' +
+                "\n sex='" + sex + '\'' +
+                "\n status='" + status + '\'' +
+                "\n peculiarities='" + peculiarities + '\'' +
+                "\n species=" + species +
+                "\n diet=" + diet +
+                "\n pen=" + pen +
+                "\n parents=" + parents +
+                "\n children=" + children +
+                '}';
+    }
 }

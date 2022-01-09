@@ -54,7 +54,7 @@ public class Activity {
     @JsonSerialize(using = PenSerializer.class)
     private Pen pen;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "works_in",
             joinColumns = @JoinColumn(name = "activity_id"),

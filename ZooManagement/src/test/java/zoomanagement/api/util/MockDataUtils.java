@@ -2,6 +2,7 @@ package zoomanagement.api.util;
 
 import zoomanagement.api.DTO.ActivityDTO;
 import zoomanagement.api.DTO.BabyAnimal;
+import zoomanagement.api.DTO.DietDTO;
 import zoomanagement.api.DTO.GenealogicalTree;
 import zoomanagement.api.domain.*;
 
@@ -73,6 +74,14 @@ public class MockDataUtils {
 
     public static Diet aDiet(String preferences, String recommendations) {
         return Diet.builder()
+                .recommendations(recommendations)
+                .schedule("11:30-17:30")
+                .preferences(preferences)
+                .build();
+    }
+
+    public static DietDTO aDietDTO(String preferences, String recommendations) {
+        return DietDTO.builder()
                 .recommendations(recommendations)
                 .schedule("11:30-17:30")
                 .preferences(preferences)
@@ -160,14 +169,14 @@ public class MockDataUtils {
         return BabyAnimal.builder()
                 .name(name)
                 .diet(null)
-                .peculiarities("#very_big")
+                .peculiarities("very_big")
                 .sex("male")
                 .parents(new ArrayList<>(Arrays.asList(motherName, fatherName)))
                 .build();
     }
 
-    public static ActivityDTO anActivityDTO(String name, String action, LocalDateTime startTime,
-                                            LocalDateTime endTime, String penName, List<String> employeeNames) {
+    public static ActivityDTO anActivityDTO(String name, List<String> employeeNames, String action, LocalDateTime startTime,
+                                            LocalDateTime endTime, String penName) {
         return ActivityDTO.builder()
                 .name(name)
                 .action(action)

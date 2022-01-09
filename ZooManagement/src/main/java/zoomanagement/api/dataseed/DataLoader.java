@@ -3,6 +3,7 @@ package zoomanagement.api.dataseed;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import zoomanagement.api.domain.*;
 import zoomanagement.api.repository.*;
 
@@ -51,7 +52,7 @@ public class DataLoader implements CommandLineRunner {
                     .surface(50.0)
                     .status(PenStatusType.active.name())
                     .description("#forest#")
-                    .species(speciesRepository.findByName("Black Bear").orElse(null))
+                    .species(species1)
                     .animals(new ArrayList<>())
                     .build());
 
@@ -69,11 +70,11 @@ public class DataLoader implements CommandLineRunner {
                     .sex("male")
                     .status("active")
                     .peculiarities("very_big")
-                    .species(speciesRepository.findByName("BlackBear").orElse(null))
+                    .species(species1)
                     .diet(diet1)
                     .parents(new ArrayList<>())
                     .children(new ArrayList<>())
-                    .pen(penRepository.findByName("BearPublic").orElse(null))
+                    .pen(pen1)
                     .build());
 
             diet1.setAnimal(animal1);

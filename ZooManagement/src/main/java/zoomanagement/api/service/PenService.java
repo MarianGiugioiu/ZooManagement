@@ -37,7 +37,7 @@ public class PenService{
     }
 
     @Transactional
-    public void changePen(String previousPenName, String newPenName) throws ResourceNotFoundException, PenAlreadyUsedException {
+    public Pen changePen(String previousPenName, String newPenName) throws ResourceNotFoundException, PenAlreadyUsedException {
         Pen previousPen = penRepository.findByName(previousPenName).orElseThrow(
             () -> {
                 log.error("Previous pen not found.");
@@ -52,21 +52,26 @@ public class PenService{
             }
         );
 
+        List<Animal> animalsChanged = new ArrayList<>();
+        List<Animal> animalsBeforeChange = previousPen.getAnimals();
+        previousPen.setAnimals(new ArrayList<>());
+        previousPen.setStatus(PenStatusType.inactive.name());
+        Pen previousPenChanged = penRepository.save(previousPen);
+
         if (!newPen.getAnimals().isEmpty()) {
             log.error("Pen already used.");
             throw new PenAlreadyUsedException("Method changePen: Pen already used.");
         } else {
             newPen.setSpecies(previousPen.getSpecies());
             newPen.setStatus(PenStatusType.active.name());
-            previousPen.setStatus(PenStatusType.inactive.name());
-            List<Animal> animals = previousPen.getAnimals();
-            for (Animal animal : animals) {
-                animal.setPen(newPen);
-                animalRepository.save(animal);
+            for (Animal animal : animalsBeforeChange) {
+                animal.setPen(null);
+                animalsChanged.add(animal);
             }
         }
-        penRepository.save(previousPen);
-        penRepository.save(newPen);
+        newPen.setAnimals(animalsChanged);
+        Pen newPenChanged = penRepository.save(newPen);
+        return newPenChanged;
     }
 
     public List<PenDTO> getMap() {

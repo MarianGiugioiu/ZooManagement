@@ -3,6 +3,7 @@ package zoomanagement.api.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import zoomanagement.api.DTO.BabyAnimal;
 import zoomanagement.api.DTO.GenealogicalTree;
 import zoomanagement.api.domain.Animal;
@@ -78,6 +79,7 @@ public class AnimalService{
         return  animalPerSpecies;
     }
 
+    @Transactional
     public Animal addBabyAnimal(BabyAnimal babyAnimal) throws ResourceNotFoundException {
         Animal mother = animalRepository.findByName(babyAnimal.getParents().get(0)).orElseThrow(
             () -> {
@@ -93,12 +95,19 @@ public class AnimalService{
                 }
         );
 
-        Diet diet = dietRepository.save(Diet.builder()
+        /*Diet diet = dietRepository.save(Diet.builder()
                 .recommendations(babyAnimal.getDiet().getRecommendations())
                 .schedule(babyAnimal.getDiet().getSchedule())
                 .preferences(babyAnimal.getDiet().getPreferences())
                 .animal(null)
-                .build());
+                .build());*/
+
+        Diet diet = Diet.builder()
+                .recommendations(babyAnimal.getDiet().getRecommendations())
+                .schedule(babyAnimal.getDiet().getSchedule())
+                .preferences(babyAnimal.getDiet().getPreferences())
+                .animal(null)
+                .build();
 
         Animal animal = animalRepository.save(Animal.builder()
                 .name(babyAnimal.getName())
@@ -113,8 +122,8 @@ public class AnimalService{
                 .status("with mother")
                 .build());
 
-        diet.setAnimal(animal);
-        dietRepository.save(diet);
+        /*diet.setAnimal(animal);
+        dietRepository.save(diet);*/
 
         return animal;
     }

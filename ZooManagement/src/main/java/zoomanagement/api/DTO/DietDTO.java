@@ -1,12 +1,18 @@
 package zoomanagement.api.DTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import zoomanagement.api.validator.ValidateDietSchedule;
 import zoomanagement.api.validator.ValidateFoodList;
 
 import javax.validation.constraints.NotNull;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DietDTO {
     @NotNull(message = "Recommendations field should not be null.")
     @ValidateFoodList(message = "Recommendations should contain a list of #<food># elements separated by commas without spaces in between.")

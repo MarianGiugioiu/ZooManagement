@@ -2,6 +2,7 @@ package zoomanagement.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import zoomanagement.api.DTO.PenDTO;
@@ -15,7 +16,7 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/pens")
+@RequestMapping(value = "/api/pens")
 public class PenController {
     private final PenService penService;
 
@@ -26,9 +27,9 @@ public class PenController {
     }
 
     @PatchMapping(value = "/change")
-    public ResponseEntity<HttpStatus> changePen(@RequestParam String previousPen, @RequestParam String newPen) throws ResourceNotFoundException, PenAlreadyUsedException {
-        penService.changePen(previousPen, newPen);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Pen> changePen(@RequestParam String previousPen, @RequestParam String newPen) throws ResourceNotFoundException, PenAlreadyUsedException {
+        Pen pen = penService.changePen(previousPen, newPen);
+        return new ResponseEntity<>(pen, HttpStatus.OK);
     }
 
     @GetMapping(value = "map")

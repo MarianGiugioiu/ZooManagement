@@ -45,7 +45,7 @@ public class Employee {
 
     private String schedule;
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(
             name = "specializations",
             joinColumns = @JoinColumn(name = "employee_id"),

@@ -18,6 +18,7 @@ public class SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .useDefaultResponseMessages(false)
                 .select()
                 .paths(PathSelectors.ant("/api/**"))
                 .apis(RequestHandlerSelectors.any())

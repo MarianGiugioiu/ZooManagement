@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import zoomanagement.api.DTO.BabyAnimal;
+import zoomanagement.api.DTO.DietDTO;
 import zoomanagement.api.DTO.GenealogicalTree;
 import zoomanagement.api.domain.Animal;
 import zoomanagement.api.domain.Diet;
@@ -14,6 +15,7 @@ import zoomanagement.api.domain.Species;
 import zoomanagement.api.exception.AnimalMissingInGenealogicalTreeException;
 import zoomanagement.api.exception.ResourceNotFoundException;
 import zoomanagement.api.repository.AnimalRepository;
+import zoomanagement.api.repository.DietRepository;
 import zoomanagement.api.repository.SpeciesRepository;
 
 import java.util.*;
@@ -34,6 +36,10 @@ class AnimalServiceTest {
 
     @Mock
     private SpeciesRepository speciesRepository;
+
+    @Mock
+
+    private DietRepository dietRepository;
 
     @Test
     void getAnimalFromGenealogicalTreeResultFound() throws AnimalMissingInGenealogicalTreeException, ResourceNotFoundException {
@@ -137,7 +143,51 @@ class AnimalServiceTest {
     }
 
     @Test
-    void addBabyAnimal() {
+    void addBabyAnimal() throws ResourceNotFoundException {
+        //Assert
+        Species species = aSpecies("Dog");
+        BabyAnimal babyAnimal = aBabyAnimal("Rex", "Lucy", "Max");
+        Animal mother = anAnimal("Lucy", "female");
+        mother.setSpecies(species);
+        Animal father = anAnimal("Max", "male");
+        father.setSpecies(species);
+        DietDTO dietDTO = aDietDTO("#meat#", "#meat#");
+        babyAnimal.setDiet(dietDTO);
+
+        Diet diet = Diet.builder()
+                .recommendations(babyAnimal.getDiet().getRecommendations())
+                .schedule(babyAnimal.getDiet().getSchedule())
+                .preferences(babyAnimal.getDiet().getPreferences())
+                .animal(null)
+                .build();
+
+        Animal animal = Animal.builder()
+                .name(babyAnimal.getName())
+                .age("0.1")
+                .sex(babyAnimal.getSex())
+                .species(mother.getSpecies())
+                .pen(mother.getPen())
+                .peculiarities(babyAnimal.getPeculiarities())
+                .parents(new ArrayList<>(Arrays.asList(mother, father)))
+                .children(new ArrayList<>())
+                .diet(diet)
+                .status("with mother")
+                .build();
+
+        when(animalRepository.findByName("Lucy")).thenReturn(Optional.of(mother));
+        when(animalRepository.findByName("Max")).thenReturn(Optional.of(father));
+        when(animalRepository.save(animal)).thenReturn(animal);
+
+        System.out.println(animal.toString());
+
+        //Act
+        Animal result = animalService.addBabyAnimal(babyAnimal);
+
+        //Assert
+        assertEquals(animal, result);
+        verify(animalRepository, times(2)).findByName(anyString());
+        verify(animalRepository, times(1)).save(animal);
+        verifyNoMoreInteractions(animalRepository);
     }
 
     @Test
