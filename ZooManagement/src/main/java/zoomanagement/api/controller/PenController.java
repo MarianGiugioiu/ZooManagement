@@ -15,7 +15,7 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pens")
+@RequestMapping("/api/pens")
 public class PenController {
     private final PenService penService;
 
@@ -25,7 +25,7 @@ public class PenController {
         return new ResponseEntity<>(pens, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/change")
+    @PatchMapping(value = "/change")
     public ResponseEntity<HttpStatus> changePen(@RequestParam String previousPen, @RequestParam String newPen) throws ResourceNotFoundException, PenAlreadyUsedException {
         penService.changePen(previousPen, newPen);
         return new ResponseEntity<>(HttpStatus.OK);

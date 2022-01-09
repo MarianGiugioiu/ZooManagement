@@ -124,14 +124,14 @@ public class AnimalService{
         Animal animal = animalRepository.findByName(animalName).orElseThrow(
             () -> {
                 log.error("Animal not found.");
-                return new ResourceNotFoundException("Method getAnimalFromGenealogicalTree: Animal not found.");
+                return new ResourceNotFoundException("Method getAnimalConditions: Animal not found.");
             }
         );
 
-        List<String> recommendedHabitatList = Arrays.asList(animal.getSpecies().getNaturalHabitat().split(","));
-        List<String> currentHabitatList = Arrays.asList(animal.getPen().getDescription().split(","));
-        List<String> recommendedDietList = Arrays.asList(animal.getDiet().getRecommendations().split(","));
-        List<String> currentDietList = Arrays.asList(animal.getDiet().getPreferences().split(","));
+        List<String> recommendedHabitatList = new ArrayList<>(Arrays.asList(animal.getSpecies().getNaturalHabitat().split(",")));
+        List<String> currentHabitatList = new ArrayList<>(Arrays.asList(animal.getPen().getDescription().split(",")));
+        List<String> recommendedDietList = new ArrayList<>(Arrays.asList(animal.getDiet().getRecommendations().split(",")));
+        List<String> currentDietList = new ArrayList<>(Arrays.asList(animal.getDiet().getPreferences().split(",")));
 
         currentHabitatList.retainAll(recommendedHabitatList);
         currentDietList.retainAll(recommendedDietList);

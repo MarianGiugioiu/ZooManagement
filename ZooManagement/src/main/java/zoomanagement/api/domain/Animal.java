@@ -9,6 +9,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import zoomanagement.api.serializer.AnimalListSerializer;
+import zoomanagement.api.serializer.DietSerializer;
+import zoomanagement.api.serializer.PenSerializer;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -37,7 +39,6 @@ public class Animal {
     @Type(type="uuid-char")
     private UUID id;
 
-    @NotBlank(message = "Name is mandatory")
     private String name;
 
     private String age;
@@ -52,9 +53,11 @@ public class Animal {
     private Species species;
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval=true)
+    @JsonSerialize(using = DietSerializer.class)
     private Diet diet;
 
     @ManyToOne
+    @JsonSerialize(using = PenSerializer.class)
     private Pen pen;
 
     @ManyToMany()

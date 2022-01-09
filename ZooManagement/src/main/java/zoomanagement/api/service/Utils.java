@@ -1,6 +1,7 @@
 package zoomanagement.api.service;
 
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import zoomanagement.api.DTO.DaySchedule;
 
 import java.time.LocalDateTime;
@@ -9,9 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Component
 public class Utils {
-    Map<String, Integer> daysOfWeek = Map.ofEntries(
+    private static Map<String, Integer> daysOfWeek = Map.ofEntries(
             Map.entry("monday", 1),
             Map.entry("tuesday", 2),
             Map.entry("wednesday", 3),
@@ -20,7 +20,7 @@ public class Utils {
             Map.entry("saturday", 6),
             Map.entry("sunday", 7)
     );
-    public List<DaySchedule> getScheduleList(String schedule) {
+    public static List<DaySchedule> getScheduleList(String schedule) {
         List<DaySchedule> scheduleList = new ArrayList<>();
         String[] days = schedule.split(";");
         for (String day : days) {
@@ -47,7 +47,7 @@ public class Utils {
         return scheduleList;
     }
 
-    public boolean scheduleContains(List<DaySchedule> scheduleList, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public static boolean scheduleContains(List<DaySchedule> scheduleList, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         Integer dayToInt = daysOfWeek.get(startDateTime.getDayOfWeek().toString().toLowerCase());
         LocalTime startTime = LocalTime.of(startDateTime.getHour(), startDateTime.getMinute());
         LocalTime endTime = LocalTime.of(endDateTime.getHour(), endDateTime.getMinute());
@@ -59,5 +59,24 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    public boolean validDietSchedule(String schedule) {
+        String[] scheduleParts = schedule.split("-");
+        if (scheduleParts.length != 3) return false;
+        String[] days = scheduleParts[0].split(":");
+        String[] startTime = scheduleParts[1].split(":");
+        String[] endTime = scheduleParts[2].split(":");
+        if (days.length != 2 || startTime.length != 2 || endTime.length != 2) return false;
+
+        if (!daysOfWeek.containsKey(days[0]) || !daysOfWeek.containsKey(days[1])) {
+            return false;
+        } else {
+            if (daysOfWeek.get(days[0]) >= daysOfWeek.get(days[1])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

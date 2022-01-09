@@ -1,7 +1,9 @@
 package zoomanagement.api.service;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import zoomanagement.api.DTO.DaySchedule;
 import zoomanagement.api.domain.Employee;
@@ -17,11 +19,10 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class EmployeeService{
     private final EmployeeRepository employeeRepository;
     private final SpeciesRepository speciesRepository;
-    private final Utils utils;
 
     public List<Employee> getAllEmployeesWithSpecialization(String speciesName, LocalDateTime startTime, LocalDateTime endTime) throws ResourceNotFoundException {
         Species species = speciesRepository.findByName(speciesName).orElseThrow(
@@ -37,12 +38,12 @@ public class EmployeeService{
 
         List<Employee> filteredEmployeesWithSpecialization = new ArrayList<>();
         for (Employee employee : employeesWithSpecialization) {
-            log.info(employee.getSchedule());
-            List<DaySchedule> scheduleList = utils.getScheduleList(employee.getSchedule());
+            //log.info(employee.getSchedule());
+            List<DaySchedule> scheduleList = Utils.getScheduleList(employee.getSchedule());
             /*for (DaySchedule daySchedule : scheduleList) {
                 log.info(daySchedule.toString());
             }*/
-            if (utils.scheduleContains(scheduleList, startTime, endTime)) {
+            if (Utils.scheduleContains(scheduleList, startTime, endTime)) {
                 filteredEmployeesWithSpecialization.add(employee);
             }
         }

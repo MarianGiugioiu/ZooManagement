@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/animals")
+@RequestMapping("/api/animals")
 public class AnimalController {
     private final AnimalService animalService;
 

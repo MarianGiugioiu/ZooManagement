@@ -1,5 +1,7 @@
 package zoomanagement.api.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +22,18 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/activities")
+@RequestMapping("/api/activities")
 public class ActivityController {
     private final ActivityService activityService;
 
 
-    @PostMapping(value = {"", "/"})
-    public ResponseEntity<Activity> addActivity (@Valid @RequestBody ActivityDTO activity) throws ResourceNotFoundException, EmployeeBusyException {
+    @PostMapping(value = "")
+    @ApiOperation(
+            value = "Add new Activity",
+            notes = "Provide an ActivityDTO with enough information to build and save a new Activity.",
+            response = Activity.class
+    )
+    public ResponseEntity<Activity> addActivity (@ApiParam(value = "An ActivityDTO") @Valid @RequestBody ActivityDTO activity) throws ResourceNotFoundException, EmployeeBusyException {
         Activity savedActivity = activityService.add(activity);
         return new ResponseEntity<>(savedActivity, HttpStatus.CREATED);
     }

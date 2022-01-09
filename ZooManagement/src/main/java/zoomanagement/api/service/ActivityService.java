@@ -7,6 +7,7 @@ import zoomanagement.api.DTO.ActivityDTO;
 import zoomanagement.api.domain.Activity;
 import zoomanagement.api.domain.Employee;
 import zoomanagement.api.domain.Pen;
+import zoomanagement.api.domain.PenStatusType;
 import zoomanagement.api.exception.EmployeeBusyException;
 import zoomanagement.api.exception.ResourceNotFoundException;
 import zoomanagement.api.repository.ActivityRepository;
@@ -53,9 +54,9 @@ public class ActivityService{
         String action = activityDTO.getAction();
 
         if (action.contains("feeding") || action.contains("cleaning")) {
-            pen.setStatus("maintenance");
+            pen.setStatus(PenStatusType.maintenance.name());
         } else if (action.contains("repair") || action.contains("build")) {
-            pen.setStatus("inactive");
+            pen.setStatus(PenStatusType.inactive.name());
         }
 
         pen = penRepository.save(pen);
