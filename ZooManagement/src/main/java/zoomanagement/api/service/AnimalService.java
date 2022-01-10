@@ -35,7 +35,7 @@ public class AnimalService{
 
         for (String parent : genealogicalTree.getParents()) {
             int index = parent.equals("female") ? 0 : 1;
-            if (animal.getParents().get(index) == null) {
+            if (animal.getParents().get(index).getName() == "Unknown") {
                 throw new AnimalMissingInGenealogicalTreeException("Method getAnimalFromGenealogicalTree: Animal not found in genealogical tree.");
             } else {
                 animal = animal.getParents().get(index);
@@ -55,7 +55,7 @@ public class AnimalService{
         return animalRepository.findAllAnimalsByAgeAndSexAndSpecies(age, sex, species);
     }
 
-    public HashMap<String, Animal> getUniqueAnimals() {
+    public Map<String, Animal> getUniqueAnimals() {
         HashMap<String, Animal> animalPerSpecies = new HashMap<>();
         List<Animal> animals = animalRepository.findAll();
         for (Animal animal: animals) {

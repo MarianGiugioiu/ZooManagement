@@ -56,7 +56,7 @@ public class Animal {
     @JsonSerialize(using = DietSerializer.class)
     private Diet diet;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JsonSerialize(using = PenSerializer.class)
     private Pen pen;
 

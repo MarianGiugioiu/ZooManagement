@@ -1,5 +1,6 @@
 package zoomanagement.api.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,15 +43,17 @@ class AnimalServiceTest {
     private DietRepository dietRepository;
 
     @Test
+    @DisplayName("Test getAnimalFromGenealogicalTree returns correct animal.")
     void getAnimalFromGenealogicalTreeResultFound() throws AnimalMissingInGenealogicalTreeException, ResourceNotFoundException {
         //Arrange
         GenealogicalTree genealogicalTree = aGenealogicalTree("Rex", new ArrayList<>(Arrays.asList("male", "female")));
+        Animal unknownAnimal = unknownAnimal();
         Animal animal = anAnimal("Rex");
         Animal father = anAnimal("Max", "male");
         Animal grandMother = anAnimal("Lucy", "female");
 
-        father.setParents(new ArrayList<>(Arrays.asList(grandMother, null)));
-        animal.setParents(new ArrayList<>(Arrays.asList(null, father)));
+        father.setParents(new ArrayList<>(Arrays.asList(grandMother, unknownAnimal)));
+        animal.setParents(new ArrayList<>(Arrays.asList(unknownAnimal, father)));
 
         when(animalRepository.findByName("Rex")).thenReturn(Optional.of(animal));
 
@@ -62,6 +65,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test getAnimalFromGenealogicalTree returns ResourceNotFoundException for animal.")
     void getAnimalFromGenealogicalTreeAnimalNotFound() {
         //Arrange
         GenealogicalTree genealogicalTree = aGenealogicalTree("Bruno", null);
@@ -74,10 +78,13 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test getAnimalFromGenealogicalTree returns AnimalMissingInGenealogicalTreeException.")
     void getAnimalFromGenealogicalTreeAnimalMissingInGenealogicalTree() {
         //Arrange
         GenealogicalTree genealogicalTree = aGenealogicalTree("Rex", new ArrayList<>(Arrays.asList("male")));
         Animal animal = anAnimal("Rex");
+        Animal unknownAnimal = unknownAnimal();
+        animal.setParents(new ArrayList<>(Arrays.asList(unknownAnimal, unknownAnimal)));
 
 
         when(animalRepository.findByName("Rex")).thenReturn(Optional.of(animal));
@@ -89,6 +96,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test getAllAnimalsByAgeAndSexAndSpecies returns correct animal.")
     void getAllAnimalsByAgeAndSexAndSpeciesResultFound() throws ResourceNotFoundException {
         //Arrange
         Species species = aSpecies("Bear");
@@ -108,6 +116,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test getAllAnimalsByAgeAndSexAndSpecies returns ResourceNotFoundException for species.")
     void getAllAnimalsByAgeAndSexAndSpeciesSpeciesMissing() {
         //Arrange
         when(speciesRepository.findByName(anyString())).thenReturn(Optional.empty());
@@ -119,6 +128,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test getUniqueAnimals returns correct animals.")
     void getUniqueAnimals() {
         //Arrange
         Species bear = aSpecies("Bear");
@@ -143,6 +153,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test addBabyAnimal adds new animal.")
     void addBabyAnimal() throws ResourceNotFoundException {
         //Assert
         Species species = aSpecies("Dog");
@@ -191,6 +202,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test addBabyAnimal returns ResourceNotFoundException for mother.")
     void addBabyAnimalMotherNotFound() {
         //Arrange
         BabyAnimal babyAnimal = aBabyAnimal("Rex", "Lucy", "Max");
@@ -203,6 +215,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test addBabyAnimal returns ResourceNotFoundException for father.")
     void addBabyAnimalFatherNotFound() {
         //Arrange
         BabyAnimal babyAnimal = aBabyAnimal("Rex", "Lucy", "Max");
@@ -217,6 +230,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test getAnimalConditions returns message: Both habitat and diet are not in optimal conditions.")
     void getAnimalConditionsFirstCase() throws ResourceNotFoundException {
         //Arrange
         Pen pen = aPen("BearPublic", "#property1#");
@@ -236,6 +250,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test getAnimalConditions returns message: Habitat is not in optimal conditions.")
     void getAnimalConditionsSecondCase() throws ResourceNotFoundException {
         //Arrange
         Pen pen = aPen("BearPublic", "#property1#");
@@ -255,6 +270,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test getAnimalConditions returns message: Diet is not in optimal conditions.")
     void getAnimalConditionsThirdCase() throws ResourceNotFoundException {
         //Arrange
         Pen pen = aPen("BearPublic", "#property1#");
@@ -274,6 +290,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test getAnimalConditions returns message: Both habitat and diet are in optimal conditions..")
     void getAnimalConditionsLastCase() throws ResourceNotFoundException {
         //Arrange
         Pen pen = aPen("BearPublic", "#property1#");
@@ -293,6 +310,7 @@ class AnimalServiceTest {
     }
 
     @Test
+    @DisplayName("Test getAnimalConditions returns ResourceNotFoundException for animal.")
     void getAnimalConditionsAnimalNotFound() {
         when(animalRepository.findByName(anyString())).thenReturn(Optional.empty());
 

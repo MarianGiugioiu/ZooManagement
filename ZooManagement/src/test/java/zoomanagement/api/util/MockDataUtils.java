@@ -88,6 +88,21 @@ public class MockDataUtils {
                 .build();
     }
 
+    public static Animal unknownAnimal() {
+        return Animal.builder()
+                .name("Unknown")
+                .age("")
+                .sex("")
+                .status("")
+                .peculiarities("")
+                .species(null)
+                .diet(null)
+                .parents(new ArrayList<>())
+                .children(new ArrayList<>())
+                .pen(null)
+                .build();
+    }
+
     public static Animal anAnimal(String name) {
         return Animal.builder()
                 .name(name)
@@ -97,8 +112,8 @@ public class MockDataUtils {
                 .peculiarities("very_big")
                 .species(null)
                 .diet(null)
-                .parents(new ArrayList<>(Arrays.asList(null, null)))
-                .children(new ArrayList<>(Arrays.asList(null, null)))
+                .parents(new ArrayList<>())
+                .children(new ArrayList<>())
                 .pen(null)
                 .build();
     }
@@ -112,8 +127,8 @@ public class MockDataUtils {
                 .peculiarities("very_big")
                 .species(null)
                 .diet(null)
-                .parents(new ArrayList<>(Arrays.asList(null, null)))
-                .children(new ArrayList<>(Arrays.asList(null, null)))
+                .parents(new ArrayList<>())
+                .children(new ArrayList<>())
                 .pen(null)
                 .build();
     }
@@ -127,8 +142,8 @@ public class MockDataUtils {
                 .peculiarities(peculiarities)
                 .species(species)
                 .diet(null)
-                .parents(new ArrayList<>(Arrays.asList(null, null)))
-                .children(new ArrayList<>(Arrays.asList(null, null)))
+                .parents(new ArrayList<>())
+                .children(new ArrayList<>())
                 .pen(null)
                 .build();
     }
@@ -142,8 +157,8 @@ public class MockDataUtils {
                 .peculiarities("very_big")
                 .species(species)
                 .diet(diet)
-                .parents(new ArrayList<>(Arrays.asList(null, null)))
-                .children(new ArrayList<>(Arrays.asList(null, null)))
+                .parents(new ArrayList<>())
+                .children(new ArrayList<>())
                 .pen(pen)
                 .build();
     }

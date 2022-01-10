@@ -78,6 +78,7 @@ class PenServiceTest {
     }
 
     @Test
+    @DisplayName("Test changePen moves all animals from previous pen to new pen.")
     void changePenSuccess() throws ResourceNotFoundException, PenAlreadyUsedException {
         //Arrange
         //Before change
@@ -138,6 +139,7 @@ class PenServiceTest {
     }
 
     @Test
+    @DisplayName("Test changePen returns ResourceNotFoundException for previous pen.")
     void changePenPreviousPenNotFound(){
         //Arrange
         when(penRepository.findByName(anyString())).thenReturn(Optional.empty());
@@ -149,6 +151,7 @@ class PenServiceTest {
     }
 
     @Test
+    @DisplayName("Test changePen returns ResourceNotFoundException for new pen.")
     void changePenNewPenNotFound(){
         //Arrange
         when(penRepository.findByName("BearPublic1")).thenReturn(Optional.of(new Pen()));
@@ -161,6 +164,7 @@ class PenServiceTest {
     }
 
     @Test
+    @DisplayName("Test changePen returns PenAlreadyUsedException.")
     void changePenAlreadyUsed(){
         //Arrange
         Pen newPen = new Pen();
@@ -178,6 +182,7 @@ class PenServiceTest {
     }
 
     @Test
+    @DisplayName("Test getMap returns correct map.")
     void getMap() {
         //Arrange
         Species species = aSpecies("Dog");

@@ -1,5 +1,6 @@
 package zoomanagement.api.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,7 +45,8 @@ class ActivityServiceTest {
     private ActivityRepository activityRepository;
 
     @Test
-    void add() throws ResourceNotFoundException, EmployeeBusyException {
+    @DisplayName("Test add adds new activity.")
+    void addSuccess() throws ResourceNotFoundException, EmployeeBusyException {
         //Arrange
         ActivityDTO activityDTO = anActivityDTO("Cleaning BearPublic",
                 new ArrayList<>(Arrays.asList("Alin")),
@@ -91,6 +93,7 @@ class ActivityServiceTest {
     }
 
     @Test
+    @DisplayName("Test add returns ResourceNotFoundException for pen.")
     void addPenNotFound() {
         ActivityDTO activityDTO = anActivityDTO(new ArrayList<>(Arrays.asList("Alin")),
                 LocalDateTime.of(2022, 1, 8, 13, 30),
@@ -109,6 +112,7 @@ class ActivityServiceTest {
     }
 
     @Test
+    @DisplayName("Test add returns ResourceNotFoundException for an employee.")
     void addEmployeeNotFound() {
         //Arrange
         ActivityDTO activityDTO = anActivityDTO(new ArrayList<>(Arrays.asList("Alin")));
@@ -121,6 +125,7 @@ class ActivityServiceTest {
     }
 
     @Test
+    @DisplayName("Test add returns EmployeeBusyException.")
     void addEmployeeBusy() {
         //Arrange
         ActivityDTO activityDTO = anActivityDTO(new ArrayList<>(Arrays.asList("Alin")),

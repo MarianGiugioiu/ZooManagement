@@ -36,7 +36,7 @@ public class AnimalController {
     }
 
     @GetMapping(value = "unique")
-    public ResponseEntity<HashMap<String, Animal>> getUniqueAnimals(){
+    public ResponseEntity<Map<String, Animal>> getUniqueAnimals(){
         return new ResponseEntity<>(animalService.getUniqueAnimals(), HttpStatus.OK);
     }
 

@@ -2,12 +2,14 @@ package zoomanagement.api.service;
 
 import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import zoomanagement.api.DTO.SpecializationBetweenHours;
 import zoomanagement.api.domain.Employee;
 import zoomanagement.api.domain.Species;
 import zoomanagement.api.exception.ResourceNotFoundException;
@@ -37,6 +39,7 @@ class EmployeeServiceTest {
     private SpeciesRepository speciesRepository;
 
     @Test
+    @DisplayName("Test getAllEmployeesWithSpecialization returns correct employees when no interval is provided.")
     void getAllEmployeesWithSpecializationWithoutIntervals() throws ResourceNotFoundException {
         //Arrange
         Species species = aSpecies("Bear");
@@ -51,14 +54,17 @@ class EmployeeServiceTest {
         when(employeeRepository.findAllBySpecializationsContaining(species))
                 .thenReturn(employees);
 
+        SpecializationBetweenHours specializationBetweenHours = new SpecializationBetweenHours("Bear",null, null);
+
         //Act
-        List<Employee> result = employeeService.getAllEmployeesWithSpecialization("Bear",null,null);
+        List<Employee> result = employeeService.getAllEmployeesWithSpecialization(specializationBetweenHours);
 
         //Assert
         assertEquals(employees, result);
     }
 
     @Test
+    @DisplayName("Test getAllEmployeesWithSpecialization returns correct employees when interval is provided.")
     void getAllEmployeesWithSpecializationWithIntervals() throws ResourceNotFoundException {
         //Arrange
         LocalDateTime startTime = LocalDateTime.of(2022, 01, 8, 13, 30);
@@ -89,19 +95,22 @@ class EmployeeServiceTest {
         when(employeeRepository.findAllBySpecializationsContaining(species))
                 .thenReturn(employees);
 
+        SpecializationBetweenHours specializationBetweenHours = new SpecializationBetweenHours("Bear",startTime,endTime);
+
         //Act
-        List<Employee> result = employeeService.getAllEmployeesWithSpecialization("Bear",startTime,endTime);
+        List<Employee> result = employeeService.getAllEmployeesWithSpecialization(specializationBetweenHours);
 
         //Assert
         assertEquals(filteredEmployees, result);
     }
 
     @Test
+    @DisplayName("Test getAllEmployeesWithSpecialization returns ResourceNotFoundException for species.")
     void getAllEmployeesWithSpecializationSpeciesNotFound() {
         when(speciesRepository.findByName("Bear")).thenReturn(Optional.empty());
-
+        SpecializationBetweenHours specializationBetweenHours = new SpecializationBetweenHours("Bear",null, null);
         //Act
-        assertThatThrownBy(() -> employeeService.getAllEmployeesWithSpecialization("Bear", null, null))
+        assertThatThrownBy(() -> employeeService.getAllEmployeesWithSpecialization(specializationBetweenHours))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("Method getAllEmployeesWithSpecialization: Species not found.");
     }

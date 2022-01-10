@@ -8,6 +8,7 @@ import zoomanagement.api.domain.*;
 import zoomanagement.api.repository.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Component
 @AllArgsConstructor
@@ -64,6 +65,19 @@ public class DataLoader implements CommandLineRunner {
                     .build());
 
             //Animals
+            Animal animal0 = animalRepository.save(Animal.builder()
+                    .name("Unknown")
+                    .age("")
+                    .sex("")
+                    .status("")
+                    .peculiarities("")
+                    .species(null)
+                    .diet(null)
+                    .parents(new ArrayList<>())
+                    .children(new ArrayList<>())
+                    .pen(null)
+                    .build());
+
             Animal animal1 = animalRepository.save(Animal.builder()
                     .name("Bruno")
                     .age("12:3")
@@ -72,7 +86,7 @@ public class DataLoader implements CommandLineRunner {
                     .peculiarities("very_big")
                     .species(species1)
                     .diet(diet1)
-                    .parents(new ArrayList<>())
+                    .parents(new ArrayList<>((Arrays.asList(null, null))))
                     .children(new ArrayList<>())
                     .pen(pen1)
                     .build());

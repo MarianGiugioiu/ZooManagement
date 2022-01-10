@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import zoomanagement.api.DTO.DaySchedule;
+import zoomanagement.api.DTO.SpecializationBetweenHours;
 import zoomanagement.api.domain.Employee;
 import zoomanagement.api.domain.Species;
 import zoomanagement.api.exception.ResourceNotFoundException;
@@ -24,7 +25,11 @@ public class EmployeeService{
     private final EmployeeRepository employeeRepository;
     private final SpeciesRepository speciesRepository;
 
-    public List<Employee> getAllEmployeesWithSpecialization(String speciesName, LocalDateTime startTime, LocalDateTime endTime) throws ResourceNotFoundException {
+    public List<Employee> getAllEmployeesWithSpecialization(SpecializationBetweenHours specializationBetweenHours) throws ResourceNotFoundException {
+        String speciesName = specializationBetweenHours.getName();
+        LocalDateTime startTime = specializationBetweenHours.getStartTime();
+        LocalDateTime endTime = specializationBetweenHours.getEndTime();
+
         Species species = speciesRepository.findByName(speciesName).orElseThrow(
             () -> {
                 log.error("Species not found.");

@@ -51,7 +51,7 @@ public class Pen implements Comparable<Pen>{
     @JsonSerialize(using = SpeciesSerializer.class)
     private Species species;
 
-    @OneToMany(mappedBy = "pen", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pen", cascade = CascadeType.MERGE)
     @JsonSerialize(using = AnimalListSerializer.class)
     private List<Animal> animals;
 

@@ -27,10 +27,7 @@ public class EmployeeController {
 
     @GetMapping(value = "/specialization")
     public ResponseEntity<List<Employee>> getAllEmployeesWithSpecialization (@Valid @RequestBody SpecializationBetweenHours specializationBetweenHours) throws ResourceNotFoundException {
-        List<Employee> employees = employeeService.getAllEmployeesWithSpecialization(
-                specializationBetweenHours.getName(),
-                specializationBetweenHours.getStartTime(),
-                specializationBetweenHours.getEndTime());
+        List<Employee> employees = employeeService.getAllEmployeesWithSpecialization(specializationBetweenHours);
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 }

@@ -23,10 +23,10 @@ public class ActivityDTO {
     @Size(min = 3, max = 30, message = "Name field should have between 3 and 30 characters.")
     private String name;
 
-    @NotBlank(message = "Start time field is mandatory")
+    @NotNull(message = "Start time field is mandatory")
     private LocalDateTime startTime;
 
-    @NotBlank(message = "End time field is mandatory")
+    @NotNull(message = "End time field is mandatory")
     private LocalDateTime endTime;
 
     @NotBlank(message = "Action field is mandatory")
