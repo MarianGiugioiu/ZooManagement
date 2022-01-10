@@ -10,6 +10,7 @@ import zoomanagement.api.repository.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+//Seed the database before usage
 @Component
 @AllArgsConstructor
 public class DataLoader implements CommandLineRunner {

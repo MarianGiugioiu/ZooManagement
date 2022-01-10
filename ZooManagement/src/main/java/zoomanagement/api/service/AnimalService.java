@@ -95,13 +95,6 @@ public class AnimalService{
                 }
         );
 
-        /*Diet diet = dietRepository.save(Diet.builder()
-                .recommendations(babyAnimal.getDiet().getRecommendations())
-                .schedule(babyAnimal.getDiet().getSchedule())
-                .preferences(babyAnimal.getDiet().getPreferences())
-                .animal(null)
-                .build());*/
-
         Diet diet = Diet.builder()
                 .recommendations(babyAnimal.getDiet().getRecommendations())
                 .schedule(babyAnimal.getDiet().getSchedule())
