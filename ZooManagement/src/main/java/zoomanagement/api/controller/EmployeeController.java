@@ -1,5 +1,8 @@
 package zoomanagement.api.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -8,8 +11,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import zoomanagement.api.DTO.SpecializationBetweenHours;
+import zoomanagement.api.domain.Activity;
 import zoomanagement.api.domain.Employee;
+import zoomanagement.api.exception.ExceptionResponse;
 import zoomanagement.api.exception.ResourceNotFoundException;
+import zoomanagement.api.exception.ValidationExceptionResponse;
 import zoomanagement.api.service.EmployeeService;
 
 import javax.validation.Valid;
@@ -21,51 +27,24 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/employees")
+@RequestMapping("/api/employees")
 public class EmployeeController {
     private final EmployeeService employeeService;
 
-
-
-    @GetMapping(value = {"", "/"})
-    public ResponseEntity<List<Employee>> getAllEmployees () {
-        List<Employee> employees = employeeService.getAll();
-        return new ResponseEntity<>(employees, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") UUID id) throws ResourceNotFoundException {
-        Employee employee;
-        employee = employeeService.getOneById(id);
-        return new ResponseEntity<>(employee, HttpStatus.OK);
-    }
-
-    @PostMapping(value = {"", "/"})
-    public ResponseEntity<Employee> addEmployee (@Valid @RequestBody Employee employee) {
-        Employee savedEmployee;
-        savedEmployee = employeeService.add(employee);
-        return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
-    }
-
-    @PatchMapping(value = "/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable( "id" ) UUID id, @Valid @RequestBody Employee employee ) throws ResourceNotFoundException {
-        Employee updatedEmployee;
-        updatedEmployee = employeeService.update(id, employee);
-        return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
-    }
-
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<HttpStatus> deleteEmployee(@PathVariable("id") UUID id) throws ResourceNotFoundException {
-        employeeService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
+    @ApiOperation(
+            value = "Get all employees with a certain specialization",
+            notes = "Retrieves all employees who have the provided name of species among their specializations." +
+                    "If an interval of time is provided, the list of employees is filtered to include only those who work in that interval.",
+            response = Employee.class
+    )
+    @ApiResponses(value={
+            @ApiResponse(code=200, message="Ok", response = Employee.class),
+            @ApiResponse(code=404, message="A species is not found", response = ExceptionResponse.class),
+            @ApiResponse(code=400, message="Invalid data", response = ValidationExceptionResponse.class)
+    })
     @GetMapping(value = "/specialization")
     public ResponseEntity<List<Employee>> getAllEmployeesWithSpecialization (@Valid @RequestBody SpecializationBetweenHours specializationBetweenHours) throws ResourceNotFoundException {
-        List<Employee> employees = employeeService.getAllEmployeesWithSpecialization(
-                specializationBetweenHours.getName(),
-                specializationBetweenHours.getStartTime(),
-                specializationBetweenHours.getEndTime());
+        List<Employee> employees = employeeService.getAllEmployeesWithSpecialization(specializationBetweenHours);
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 }

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import zoomanagement.api.serializer.AnimalListSerializer;
 import zoomanagement.api.serializer.AnimalSerializer;
 
 import javax.persistence.*;

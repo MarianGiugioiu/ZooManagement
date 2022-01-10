@@ -3,6 +3,7 @@ package zoomanagement.api.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import zoomanagement.api.DTO.BabyAnimal;
 import zoomanagement.api.DTO.GenealogicalTree;
 import zoomanagement.api.domain.Animal;
@@ -19,54 +20,10 @@ import java.util.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class AnimalService implements ServiceInterface<Animal>{
+public class AnimalService{
     private final AnimalRepository animalRepository;
     private final SpeciesRepository speciesRepository;
     private final DietRepository dietRepository;
-
-    @Override
-    public List<Animal> getAll() {
-        log.info("Fetching all animals...");
-        return animalRepository.findAll();
-    }
-
-    @Override
-    public Animal getOneById(UUID id) throws ResourceNotFoundException {
-        log.info("Fetching animal with id {}...", id);
-        return animalRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public Animal add(Animal entry){
-        log.info("Adding animal {}...", entry.getName());
-
-        return animalRepository.save(entry);
-    }
-
-    @Override
-    public Animal update(UUID id, Animal entry) throws ResourceNotFoundException{
-        if(animalRepository.findById(id).isPresent()) {
-            log.info("Updating animal with id {}...", id);
-            entry.setId(id);
-            return animalRepository.save(entry);
-        }
-        else {
-            log.error("Animal not found in the database.");
-            throw new ResourceNotFoundException("Method update: Animal not found.");
-        }
-    }
-
-    @Override
-    public void delete(UUID id) throws ResourceNotFoundException {
-        if(animalRepository.findById(id).isPresent()) {
-            log.info("Deleting animal with id {}...", id);
-            animalRepository.deleteById(id);
-        }
-        else {
-            log.error("Animal not found in the database.");
-            throw new ResourceNotFoundException("Method delete: Animal not found.");
-        }
-    }
 
     public Animal getAnimalFromGenealogicalTree(GenealogicalTree genealogicalTree) throws AnimalMissingInGenealogicalTreeException, ResourceNotFoundException {
         Animal animal = animalRepository.findByName(genealogicalTree.getName()).orElseThrow(
@@ -78,7 +35,7 @@ public class AnimalService implements ServiceInterface<Animal>{
 
         for (String parent : genealogicalTree.getParents()) {
             int index = parent.equals("female") ? 0 : 1;
-            if (animal.getParents().get(index) == null) {
+            if (animal.getParents().get(index).getName() == "Unknown") {
                 throw new AnimalMissingInGenealogicalTreeException("Method getAnimalFromGenealogicalTree: Animal not found in genealogical tree.");
             } else {
                 animal = animal.getParents().get(index);
@@ -98,7 +55,7 @@ public class AnimalService implements ServiceInterface<Animal>{
         return animalRepository.findAllAnimalsByAgeAndSexAndSpecies(age, sex, species);
     }
 
-    public HashMap<String, Animal> getUniqueAnimals() {
+    public Map<String, Animal> getUniqueAnimals() {
         HashMap<String, Animal> animalPerSpecies = new HashMap<>();
         List<Animal> animals = animalRepository.findAll();
         for (Animal animal: animals) {
@@ -122,6 +79,7 @@ public class AnimalService implements ServiceInterface<Animal>{
         return  animalPerSpecies;
     }
 
+    @Transactional
     public Animal addBabyAnimal(BabyAnimal babyAnimal) throws ResourceNotFoundException {
         Animal mother = animalRepository.findByName(babyAnimal.getParents().get(0)).orElseThrow(
             () -> {
@@ -137,12 +95,12 @@ public class AnimalService implements ServiceInterface<Animal>{
                 }
         );
 
-        Diet diet = dietRepository.save(Diet.builder()
+        Diet diet = Diet.builder()
                 .recommendations(babyAnimal.getDiet().getRecommendations())
                 .schedule(babyAnimal.getDiet().getSchedule())
                 .preferences(babyAnimal.getDiet().getPreferences())
                 .animal(null)
-                .build());
+                .build();
 
         Animal animal = animalRepository.save(Animal.builder()
                 .name(babyAnimal.getName())
@@ -157,8 +115,8 @@ public class AnimalService implements ServiceInterface<Animal>{
                 .status("with mother")
                 .build());
 
-        diet.setAnimal(animal);
-        dietRepository.save(diet);
+        /*diet.setAnimal(animal);
+        dietRepository.save(diet);*/
 
         return animal;
     }
@@ -168,14 +126,14 @@ public class AnimalService implements ServiceInterface<Animal>{
         Animal animal = animalRepository.findByName(animalName).orElseThrow(
             () -> {
                 log.error("Animal not found.");
-                return new ResourceNotFoundException("Method getAnimalFromGenealogicalTree: Animal not found.");
+                return new ResourceNotFoundException("Method getAnimalConditions: Animal not found.");
             }
         );
 
-        List<String> recommendedHabitatList = Arrays.asList(animal.getSpecies().getNaturalHabitat().split(","));
-        List<String> currentHabitatList = Arrays.asList(animal.getPen().getDescription().split(","));
-        List<String> recommendedDietList = Arrays.asList(animal.getDiet().getRecommendations().split(","));
-        List<String> currentDietList = Arrays.asList(animal.getDiet().getPreferences().split(","));
+        List<String> recommendedHabitatList = new ArrayList<>(Arrays.asList(animal.getSpecies().getNaturalHabitat().split(",")));
+        List<String> currentHabitatList = new ArrayList<>(Arrays.asList(animal.getPen().getDescription().split(",")));
+        List<String> recommendedDietList = new ArrayList<>(Arrays.asList(animal.getDiet().getRecommendations().split(",")));
+        List<String> currentDietList = new ArrayList<>(Arrays.asList(animal.getDiet().getPreferences().split(",")));
 
         currentHabitatList.retainAll(recommendedHabitatList);
         currentDietList.retainAll(recommendedDietList);

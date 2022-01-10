@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import zoomanagement.api.serializer.AnimalListSerializer;
+import zoomanagement.api.serializer.SpeciesSerializer;
 
 import javax.persistence.*;
 import java.util.List;
@@ -40,16 +41,17 @@ public class Pen implements Comparable<Pen>{
 
     private String location;
 
-    private String surface;
+    private Double surface;
 
     private String status;
 
     private String description;
 
     @ManyToOne
+    @JsonSerialize(using = SpeciesSerializer.class)
     private Species species;
 
-    @OneToMany(mappedBy = "pen")
+    @OneToMany(mappedBy = "pen", cascade = CascadeType.MERGE)
     @JsonSerialize(using = AnimalListSerializer.class)
     private List<Animal> animals;
 
@@ -61,6 +63,9 @@ public class Pen implements Comparable<Pen>{
         Double x2 = Double.parseDouble(pos1[1]);
         Double y1 = Double.parseDouble(pos2[0]);
         Double y2 = Double.parseDouble(pos2[1]);
-        return (int) (Math.sqrt(x1 * x1 + x2 * x2) - Math.sqrt(y1 * y1 + y2 * y2));
+        Double val1 = Math.sqrt(x1 * x1 + x2 * x2);
+        Double val2 = Math.sqrt(y1 * y1 + y2 * y2);
+
+        return (int) Math.signum(val1 - val2);
     }
 }

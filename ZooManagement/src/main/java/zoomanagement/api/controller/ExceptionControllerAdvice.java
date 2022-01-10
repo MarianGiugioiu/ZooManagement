@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
-import zoomanagement.api.exception.ExceptionResponse;
-import zoomanagement.api.exception.ResourceNotFoundException;
-import zoomanagement.api.exception.ValidationExceptionResponse;
+import zoomanagement.api.exception.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -26,6 +24,42 @@ public class ExceptionControllerAdvice {
                         .timestamp(LocalDateTime.now())
                         .status(HttpStatus.NOT_FOUND.value())
                         .error("Not Found")
+                        .message(exception.getLocalizedMessage())
+                        .path(request.getServletPath())
+                        .build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleAnimalMissingInGenealogicalTreeException(final HttpServletRequest request, AnimalMissingInGenealogicalTreeException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ExceptionResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.NOT_FOUND.value())
+                        .error("Not Found")
+                        .message(exception.getLocalizedMessage())
+                        .path(request.getServletPath())
+                        .build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleEmployeeBusyException(final HttpServletRequest request, EmployeeBusyException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ExceptionResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.CONFLICT.value())
+                        .error("Resource already used")
+                        .message(exception.getLocalizedMessage())
+                        .path(request.getServletPath())
+                        .build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handlePenAlreadyUsedException(final HttpServletRequest request, PenAlreadyUsedException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ExceptionResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.CONFLICT.value())
+                        .error("Resource already used")
                         .message(exception.getLocalizedMessage())
                         .path(request.getServletPath())
                         .build());

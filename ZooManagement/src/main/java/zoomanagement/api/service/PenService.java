@@ -3,12 +3,16 @@ package zoomanagement.api.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import zoomanagement.api.DTO.PenDTO;
 import zoomanagement.api.domain.Animal;
 import zoomanagement.api.domain.Diet;
 import zoomanagement.api.domain.Pen;
+import zoomanagement.api.domain.PenStatusType;
 import zoomanagement.api.exception.PenAlreadyUsedException;
 import zoomanagement.api.exception.ResourceNotFoundException;
+import zoomanagement.api.mapper.PenMapper;
+import zoomanagement.api.repository.AnimalRepository;
 import zoomanagement.api.repository.DietRepository;
 import zoomanagement.api.repository.PenRepository;
 
@@ -18,71 +22,22 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class PenService implements ServiceInterface<Pen>{
+public class PenService{
     private final PenRepository penRepository;
     private final DietRepository dietRepository;
-
-    @Override
-    public List<Pen> getAll() {
-        log.info("Fetching all pens...");
-        return penRepository.findAll();
-    }
-
-    @Override
-    public Pen getOneById(UUID id) throws ResourceNotFoundException {
-        log.info("Fetching pen with id {}...", id);
-        return penRepository.findById(id).orElseThrow(
-                () -> {
-                    log.error("Pen not found.");
-                    return new ResourceNotFoundException("Method getOneById: Pen not found.");
-                }
-        );
-    }
-
-    @Override
-    public Pen add(Pen entry){
-        //log.info("Adding pen {}...", entry.getName());
-
-        return penRepository.save(entry);
-    }
-
-    @Override
-    public Pen update(UUID id, Pen entry) throws ResourceNotFoundException{
-        if(penRepository.findById(id).isPresent()) {
-            log.info("Updating pen with id {}...", id);
-            entry.setId(id);
-            return penRepository.save(entry);
-        }
-        else {
-            log.error("Pen not found in the database.");
-            throw new ResourceNotFoundException("Method update: Pen not found.");
-        }
-    }
-
-    @Override
-    public void delete(UUID id) throws ResourceNotFoundException {
-        if(penRepository.findById(id).isPresent()) {
-            log.info("Deleting pen with id {}...", id);
-            penRepository.deleteById(id);
-        }
-        else {
-            log.error("Pen not found in the database.");
-            throw new ResourceNotFoundException("Method delete: Pen not found.");
-        }
-    }
+    private final AnimalRepository animalRepository;
 
     public Set<Pen> getAllPensWithAnimalsEating(String food) {
         Set<Pen> pens = new HashSet<>();
-        List<Diet> diets = dietRepository.findAllByPreferencesContaining(" " + food + " ");
-        log.info(String.valueOf(diets.size()));
+        List<Diet> diets = dietRepository.findAllByPreferencesContaining("#" + food + "#");
         for (Diet diet : diets) {
-            log.info(diet.getAnimal().getName());
             pens.add(diet.getAnimal().getPen());
         }
         return pens;
     }
 
-    public void changePen(String previousPenName, String newPenName) throws ResourceNotFoundException, PenAlreadyUsedException {
+    @Transactional
+    public Pen changePen(String previousPenName, String newPenName) throws ResourceNotFoundException, PenAlreadyUsedException {
         Pen previousPen = penRepository.findByName(previousPenName).orElseThrow(
             () -> {
                 log.error("Previous pen not found.");
@@ -97,33 +52,39 @@ public class PenService implements ServiceInterface<Pen>{
             }
         );
 
-        if (previousPen.getSpecies() != newPen.getSpecies() && !newPen.getAnimals().isEmpty()) {
+        List<Animal> animalsChanged = new ArrayList<>();
+        List<Animal> animalsBeforeChange = previousPen.getAnimals();
+        previousPen.setAnimals(new ArrayList<>());
+        previousPen.setStatus(PenStatusType.inactive.name());
+        Pen previousPenChanged = penRepository.save(previousPen);
+
+        if (!newPen.getAnimals().isEmpty()) {
             log.error("Pen already used.");
             throw new PenAlreadyUsedException("Method changePen: Pen already used.");
         } else {
             newPen.setSpecies(previousPen.getSpecies());
-            newPen.setStatus("Active");
-            previousPen.setStatus("Inactive");
-            List<Animal> animals = previousPen.getAnimals();
-            for (Animal animal : animals) {
-                animal.setPen(newPen);
+            newPen.setStatus(PenStatusType.active.name());
+            for (Animal animal : animalsBeforeChange) {
+                animal.setPen(null);
+                animalsChanged.add(animal);
             }
         }
+        newPen.setAnimals(animalsChanged);
+        Pen newPenChanged = penRepository.save(newPen);
+        return newPenChanged;
     }
 
     public List<PenDTO> getMap() {
-        List<Pen> activePens = penRepository.findAll().stream().filter(pen -> (pen.getStatus().contains("active") || pen.getStatus().contains("maintenance"))).collect(Collectors.toList());
+        List<Pen> activePens = penRepository.findAll().stream()
+                .filter(pen -> (pen.getStatus().equals(PenStatusType.active.name()) ||
+                        pen.getStatus().equals(PenStatusType.maintenance.name())))
+                .collect(Collectors.toList());
+
         Collections.sort(activePens);
 
         List<PenDTO> pens = new ArrayList<>();
         for (Pen activePen : activePens) {
-            pens.add(PenDTO.builder()
-                    .name(activePen.getName())
-                    .location(activePen.getLocation())
-                    .surface(activePen.getSurface())
-                    .description(activePen.getDescription())
-                    .speciesName(activePen.getSpecies().getName())
-                    .build());
+            pens.add(PenMapper.mapToDto(activePen));
         }
         return pens;
     }
