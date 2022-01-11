@@ -33,7 +33,7 @@ public class AnimalController {
 
     @ApiOperation(
             value = "Get an animal from a genealogical tree",
-            notes = "Retrieves an animal from a genealogical tree starting from the animal with the provided name, and continuing based on the list of parents." +
+            notes = "Retrieves an animal from a genealogical tree starting from the animal with the provided name, and continuing based on the list of parents. " +
                     "If the list contains, for example, father and mother, the mother of the father of the first animal is retrieved.",
             response = Animal.class
     )
@@ -77,7 +77,7 @@ public class AnimalController {
 
     @ApiOperation(
             value = "Add a new Animal",
-            notes = "Creates and returns a baby animal based on the information provided by the BabyAnimal." +
+            notes = "Creates and returns a baby animal based on the information provided by the BabyAnimal. " +
                     "Also creates the associated diet.",
             response = Animal.class
     )
@@ -93,7 +93,7 @@ public class AnimalController {
 
     @ApiOperation(
             value = "Get conditions of animal",
-            notes = "Returns a message based on the ratios between the preferences and recommendations in the diet" +
+            notes = "Returns a message based on the ratios between the preferences and recommendations in the diet " +
                     "of the animal with the provided name and between its natural habitat and the habitat of its pen.",
             response = String.class
     )

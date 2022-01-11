@@ -33,13 +33,13 @@ public class EmployeeController {
 
     @ApiOperation(
             value = "Get all employees with a certain specialization",
-            notes = "Retrieves all employees who have the provided name of species among their specializations." +
+            notes = "Retrieves all employees who have the provided name of species among their specializations. " +
                     "If an interval of time is provided, the list of employees is filtered to include only those who work in that interval.",
             response = Employee.class
     )
     @ApiResponses(value={
             @ApiResponse(code=200, message="Ok", response = Employee.class),
-            @ApiResponse(code=404, message="A species is not found", response = ExceptionResponse.class),
+            @ApiResponse(code=404, message="Species not found", response = ExceptionResponse.class),
             @ApiResponse(code=400, message="Invalid data", response = ValidationExceptionResponse.class)
     })
     @GetMapping(value = "/specialization")

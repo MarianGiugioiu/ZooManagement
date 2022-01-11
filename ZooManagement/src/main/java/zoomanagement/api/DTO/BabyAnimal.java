@@ -21,7 +21,7 @@ public class BabyAnimal {
     @Size(min = 3, max = 30, message = "Name field should have between 3 and 30 characters.")
     private String name;
 
-    @Size(min = 2, max = 2, message = "The list of parents should contain exactly 2 nullable elements.")
+    @Size(min = 2, max = 2, message = "The list of parents should contain exactly 2 elements.")
     public List<String> parents;
 
     @NotBlank(message = "Sex field is mandatory.")

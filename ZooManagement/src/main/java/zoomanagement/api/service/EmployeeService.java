@@ -26,28 +26,30 @@ public class EmployeeService{
     private final SpeciesRepository speciesRepository;
 
     public List<Employee> getAllEmployeesWithSpecialization(SpecializationBetweenHours specializationBetweenHours) throws ResourceNotFoundException {
+        //Gets data from the DTO
         String speciesName = specializationBetweenHours.getName();
         LocalDateTime startTime = specializationBetweenHours.getStartTime();
         LocalDateTime endTime = specializationBetweenHours.getEndTime();
 
+        //Searches for species
         Species species = speciesRepository.findByName(speciesName).orElseThrow(
             () -> {
                 log.error("Species not found.");
                 return new ResourceNotFoundException("Method getAllEmployeesWithSpecialization: Species not found.");
             }
         );
+        //Searches for all employees with the given species among their specializations
         List<Employee> employeesWithSpecialization = employeeRepository.findAllBySpecializationsContaining(species);
+
+
         if (startTime == null) {
             return employeesWithSpecialization;
         }
 
+        //If time interval is provided, gets the list of DaySchedule of each employee and selects those who work in the given interval
         List<Employee> filteredEmployeesWithSpecialization = new ArrayList<>();
         for (Employee employee : employeesWithSpecialization) {
-            //log.info(employee.getSchedule());
             List<DaySchedule> scheduleList = Utils.getScheduleList(employee.getSchedule());
-            /*for (DaySchedule daySchedule : scheduleList) {
-                log.info(daySchedule.toString());
-            }*/
             if (Utils.scheduleContains(scheduleList, startTime, endTime)) {
                 filteredEmployeesWithSpecialization.add(employee);
             }

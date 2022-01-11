@@ -11,6 +11,7 @@ import org.hibernate.annotations.Type;
 import zoomanagement.api.serializer.AnimalListSerializer;
 import zoomanagement.api.serializer.DietSerializer;
 import zoomanagement.api.serializer.PenSerializer;
+import zoomanagement.api.serializer.SpeciesSerializer;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -50,6 +51,7 @@ public class Animal {
     private String peculiarities;
 
     @ManyToOne
+    @JsonSerialize(using = SpeciesSerializer.class)
     private Species species;
 
     @OneToOne(cascade = CascadeType.MERGE, orphanRemoval=true)
@@ -60,14 +62,14 @@ public class Animal {
     @JsonSerialize(using = PenSerializer.class)
     private Pen pen;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name="parents",
             joinColumns={@JoinColumn(name="child_id")},
             inverseJoinColumns={@JoinColumn(name="parent_id")})
     @JsonSerialize(using = AnimalListSerializer.class)
     private List<Animal> parents;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name="parents",
             joinColumns={@JoinColumn(name="parent_id")},
             inverseJoinColumns={@JoinColumn(name="child_id")})

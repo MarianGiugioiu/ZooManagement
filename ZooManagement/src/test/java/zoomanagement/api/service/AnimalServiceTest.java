@@ -187,9 +187,8 @@ class AnimalServiceTest {
 
         when(animalRepository.findByName("Lucy")).thenReturn(Optional.of(mother));
         when(animalRepository.findByName("Max")).thenReturn(Optional.of(father));
-        when(animalRepository.save(animal)).thenReturn(animal);
-
-        System.out.println(animal.toString());
+        when(dietRepository.save(diet)).thenReturn(diet);
+        when(animalRepository.save(any())).thenReturn(animal);
 
         //Act
         Animal result = animalService.addBabyAnimal(babyAnimal);
@@ -197,8 +196,9 @@ class AnimalServiceTest {
         //Assert
         assertEquals(animal, result);
         verify(animalRepository, times(2)).findByName(anyString());
-        verify(animalRepository, times(1)).save(animal);
-        verifyNoMoreInteractions(animalRepository);
+        verify(animalRepository, times(1)).save(any());
+        verify(dietRepository, times(1)).save(diet);
+        verifyNoMoreInteractions(animalRepository, dietRepository);
     }
 
     @Test

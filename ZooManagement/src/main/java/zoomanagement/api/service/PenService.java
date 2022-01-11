@@ -29,7 +29,9 @@ public class PenService{
 
     public Set<Pen> getAllPensWithAnimalsEating(String food) {
         Set<Pen> pens = new HashSet<>();
+        //Searches for all diets which contain "#food#" in the string of preferences
         List<Diet> diets = dietRepository.findAllByPreferencesContaining("#" + food + "#");
+        //Gets the pen of the animal having the diet for each diet
         for (Diet diet : diets) {
             pens.add(diet.getAnimal().getPen());
         }
@@ -38,6 +40,7 @@ public class PenService{
 
     @Transactional
     public Pen changePen(String previousPenName, String newPenName) throws ResourceNotFoundException, PenAlreadyUsedException {
+        //Searches for previous pen
         Pen previousPen = penRepository.findByName(previousPenName).orElseThrow(
             () -> {
                 log.error("Previous pen not found.");
@@ -45,6 +48,7 @@ public class PenService{
             }
         );
 
+        //Searches for new pen
         Pen newPen = penRepository.findByName(newPenName).orElseThrow(
             () -> {
                 log.error("New pen not found.");
@@ -52,36 +56,51 @@ public class PenService{
             }
         );
 
-        List<Animal> animalsChanged = new ArrayList<>();
+        //Gets the list of animals from the previous pen and updates the pen
         List<Animal> animalsBeforeChange = previousPen.getAnimals();
         previousPen.setAnimals(new ArrayList<>());
         previousPen.setStatus(PenStatusType.inactive.name());
         Pen previousPenChanged = penRepository.save(previousPen);
+        Pen newPenChanged = null;
 
+        List<Animal> animalsChanged = new ArrayList<>();
+
+        //Checks if the new pen is empty
         if (!newPen.getAnimals().isEmpty()) {
             log.error("Pen already used.");
             throw new PenAlreadyUsedException("Method changePen: Pen already used.");
         } else {
+            ////Updates the new pen
             newPen.setSpecies(previousPen.getSpecies());
             newPen.setStatus(PenStatusType.active.name());
+            //System.out.println(newPen);
+            newPenChanged = penRepository.save(newPen);
+
+            //Adds every modified animal to the list of changed animals
             for (Animal animal : animalsBeforeChange) {
-                animal.setPen(null);
+                animal.setPen(newPen);
                 animalsChanged.add(animal);
             }
         }
-        newPen.setAnimals(animalsChanged);
-        Pen newPenChanged = penRepository.save(newPen);
+
+        //Sets the list of animals to the new pen
+        //newPen.setAnimals(animalsChanged);
+        newPenChanged.setAnimals(animalsChanged);
         return newPenChanged;
     }
 
     public List<PenDTO> getMap() {
+        //Searches for all pens with status "active" or "maintenance"
         List<Pen> activePens = penRepository.findAll().stream()
                 .filter(pen -> (pen.getStatus().equals(PenStatusType.active.name()) ||
                         pen.getStatus().equals(PenStatusType.maintenance.name())))
                 .collect(Collectors.toList());
 
+        //Sorts the list by location (a string containing the 2D coordinates of the pen relative to the (0,0) point)
+        //The comparison is based on the distance from the pen to the (0,0) point
         Collections.sort(activePens);
 
+        //Creates a PenDTO with enough information for each filtered pen
         List<PenDTO> pens = new ArrayList<>();
         for (Pen activePen : activePens) {
             pens.add(PenMapper.mapToDto(activePen));

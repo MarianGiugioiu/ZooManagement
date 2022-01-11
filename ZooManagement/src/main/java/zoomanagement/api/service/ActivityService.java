@@ -28,6 +28,7 @@ public class ActivityService{
 
     public Activity add(ActivityDTO activityDTO) throws ResourceNotFoundException, EmployeeBusyException {
         List<Employee> employees = new ArrayList<>();
+        //Searches for all needed employees
         for (String employeeName : activityDTO.getEmployeeNames()) {
             Employee employee = employeeRepository.findByName(employeeName).orElseThrow(
                 () -> {
@@ -35,6 +36,7 @@ public class ActivityService{
                     return new ResourceNotFoundException("Method add: Employee not found.");
                 }
             );
+            //Checks if the current employee is free for this activity
             for (Activity activityPerEmployee : employee.getActivities()) {
                 if (activityPerEmployee.getStartTime().isBefore(activityDTO.getEndTime())
                         && activityPerEmployee.getEndTime().isAfter(activityDTO.getStartTime())) {
@@ -44,6 +46,8 @@ public class ActivityService{
 
             employees.add(employee);
         }
+
+        //Searches for pen
         Pen pen = penRepository.findByName(activityDTO.getPenName()).orElseThrow(
             () -> {
                 log.error("Pen not found.");
@@ -53,6 +57,7 @@ public class ActivityService{
 
         String action = activityDTO.getAction();
 
+        //Sets the status of the pen based on the activity
         if (action.contains("feeding") || action.contains("cleaning")) {
             pen.setStatus(PenStatusType.maintenance.name());
         } else if (action.contains("repair") || action.contains("build")) {
@@ -61,6 +66,7 @@ public class ActivityService{
 
         pen = penRepository.save(pen);
 
+        //Creates the activity
         Activity activity = activityRepository.save(Activity.builder()
                 .name(activityDTO.getName())
                 .action(action)
