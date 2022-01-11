@@ -174,7 +174,7 @@ class AnimalServiceTest {
 
         Animal animal = Animal.builder()
                 .name(babyAnimal.getName())
-                .age("0.1")
+                .age("0:1")
                 .sex(babyAnimal.getSex())
                 .species(mother.getSpecies())
                 .pen(mother.getPen())
@@ -188,7 +188,7 @@ class AnimalServiceTest {
         when(animalRepository.findByName("Lucy")).thenReturn(Optional.of(mother));
         when(animalRepository.findByName("Max")).thenReturn(Optional.of(father));
         when(dietRepository.save(diet)).thenReturn(diet);
-        when(animalRepository.save(any())).thenReturn(animal);
+        when(animalRepository.save(animal)).thenReturn(animal);
 
         //Act
         Animal result = animalService.addBabyAnimal(babyAnimal);
@@ -196,7 +196,7 @@ class AnimalServiceTest {
         //Assert
         assertEquals(animal, result);
         verify(animalRepository, times(2)).findByName(anyString());
-        verify(animalRepository, times(1)).save(any());
+        verify(animalRepository, times(1)).save(animal);
         verify(dietRepository, times(1)).save(diet);
         verifyNoMoreInteractions(animalRepository, dietRepository);
     }

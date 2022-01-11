@@ -176,10 +176,18 @@ public class DataLoader implements CommandLineRunner {
                     .build());
 
             Employee employee2 = employeeRepository.save(Employee.builder()
-                    .name("Alin")
+                    .name("Alex")
                     .profession("CareTaker")
                     .schedule("monday:sunday-13:30-16:30")
                     .specializations(new ArrayList<>(Arrays.asList(species1)))
+                    .activities(new ArrayList<>())
+                    .build());
+
+            Employee employee3 = employeeRepository.save(Employee.builder()
+                    .name("Alin")
+                    .profession("CareTaker")
+                    .schedule("monday:sunday-13:30-16:30")
+                    .specializations(new ArrayList<>(Arrays.asList(species2)))
                     .activities(new ArrayList<>())
                     .build());
 

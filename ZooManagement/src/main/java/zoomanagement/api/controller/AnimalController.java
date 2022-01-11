@@ -34,7 +34,7 @@ public class AnimalController {
     @ApiOperation(
             value = "Get an animal from a genealogical tree",
             notes = "Retrieves an animal from a genealogical tree starting from the animal with the provided name, and continuing based on the list of parents. " +
-                    "If the list contains, for example, father and mother, the mother of the father of the first animal is retrieved.",
+                    "If the list contains, for example, male and female, the mother of the father of the first animal is retrieved.",
             response = Animal.class
     )
     @ApiResponses(value={

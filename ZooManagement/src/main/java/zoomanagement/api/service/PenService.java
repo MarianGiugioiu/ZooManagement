@@ -58,9 +58,6 @@ public class PenService{
 
         //Gets the list of animals from the previous pen and updates the pen
         List<Animal> animalsBeforeChange = previousPen.getAnimals();
-        previousPen.setAnimals(new ArrayList<>());
-        previousPen.setStatus(PenStatusType.inactive.name());
-        Pen previousPenChanged = penRepository.save(previousPen);
         Pen newPenChanged = null;
 
         List<Animal> animalsChanged = new ArrayList<>();
@@ -70,21 +67,26 @@ public class PenService{
             log.error("Pen already used.");
             throw new PenAlreadyUsedException("Method changePen: Pen already used.");
         } else {
-            ////Updates the new pen
+            ////Updates the pens
+            previousPen.setAnimals(new ArrayList<>());
+            previousPen.setStatus(PenStatusType.inactive.name());
+            Pen previousPenChanged = penRepository.save(previousPen);
+
             newPen.setSpecies(previousPen.getSpecies());
             newPen.setStatus(PenStatusType.active.name());
-            //System.out.println(newPen);
             newPenChanged = penRepository.save(newPen);
 
             //Adds every modified animal to the list of changed animals
             for (Animal animal : animalsBeforeChange) {
-                animal.setPen(newPen);
+                animal.setPen(newPenChanged);
+                animalRepository.save(animal);
                 animalsChanged.add(animal);
             }
         }
 
+        //System.out.println(animalsChanged.toString());
+        System.out.println(newPenChanged);
         //Sets the list of animals to the new pen
-        //newPen.setAnimals(animalsChanged);
         newPenChanged.setAnimals(animalsChanged);
         return newPenChanged;
     }

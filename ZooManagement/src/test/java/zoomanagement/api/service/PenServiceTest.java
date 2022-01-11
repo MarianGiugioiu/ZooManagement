@@ -95,9 +95,7 @@ class PenServiceTest {
         pen1.setSpecies(species);
         pen2.setStatus("inactive");
         animal1.setSpecies(species);
-        animal1.setPen(pen1);
         animal2.setSpecies(species);
-        animal2.setPen(pen1);
 
         pen1.setAnimals(new ArrayList<>(Arrays.asList(animal1, animal2)));
 
@@ -117,17 +115,18 @@ class PenServiceTest {
         animal1Changed.setSpecies(species);
         animal2Changed.setSpecies(species);
 
-        System.out.println(pen2Changed);
-
         pen1Changed.setAnimals(new ArrayList<>());
         pen2Changed.setAnimals(new ArrayList<>());
+        //pen2Changed.setAnimals(new ArrayList<>(Arrays.asList(animal1, animal2)));
 
         when(penRepository.findByName("BearPublic1")).thenReturn(Optional.of(pen1));
         when(penRepository.findByName("BearPublic2")).thenReturn(Optional.of(pen2));
+
         when(animalRepository.save(animal1Changed)).thenReturn(animal1Changed);
         when(animalRepository.save(animal2Changed)).thenReturn(animal2Changed);
-        lenient().when(penRepository.save(pen1Changed)).thenReturn(pen1Changed);
-        lenient().when(penRepository.save(pen2Changed)).thenReturn(pen2Changed);
+
+        doReturn(pen1Changed).when(penRepository).save(pen1Changed);
+        doReturn(pen2Changed).when(penRepository).save(pen2Changed);
 
         pen2Changed.setAnimals(new ArrayList<>(Arrays.asList(animal1Changed, animal2Changed)));
 
